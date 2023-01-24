@@ -1,7 +1,7 @@
 const express = require("express");
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 const app = express.Router();
 
 app.get("/", (req, res) => {
@@ -9,10 +9,10 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", async (req, res) => {
-  const { email, password} = req.body;
+  const {email, password} = req.body;
 
   try {
-    if ( !email || !password) {
+    if (!email || !password) {
       return res.send({message: "Missing Details"});
     }
 
@@ -22,11 +22,15 @@ app.post("/", async (req, res) => {
     }
 
     bcrypt.compare(password, isExist.password, function (err, result) {
-        if(result){
-            const token = jwt.sign({email,name:isExist.name,role:isExist.role},"SECRET",{expiresIn:"7 days"})
-            return res.send({token})
-        }
-        return res.send({message: "Wrong credentials"});
+      if (result) {
+        const token = jwt.sign(
+          {email, name: isExist.name, role: isExist.role},
+          "SECRET",
+          {expiresIn: "7 days"}
+        );
+        return res.send({token});
+      }
+      return res.send({message: "Wrong credentials"});
     });
   } catch (e) {
     res.status(404).send({message: e.message});
